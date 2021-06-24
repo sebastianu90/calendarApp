@@ -17,8 +17,6 @@ export const getEvents = async () => {
     return INITIAL_EVENTS_API.push(evento);
   });
 
-  // const cargadores = eventos.chargers;
-
   return INITIAL_EVENTS_API;
 };
 

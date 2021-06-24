@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { INITIAL_EVENTS, createEventId, getEvents } from "./event-utils";
 import Popup from "../modal/Popup";
+import PopupEditar from "../modal/PopupEditar";
 import { Container } from "@material-ui/core";
 
 export default class Calendar extends React.Component {
@@ -12,9 +13,11 @@ export default class Calendar extends React.Component {
     weekendsVisible: true,
     currentEvents: [],
     visibleModal: false,
+    visibleModalEditar: false,
     form: {},
     selectInfo: {},
-    INITIAL_EVENTS_API: null,
+    clickInfo: null,
+    INITIAL_EVENTS: null,
     INITIAL_CHARGERS_API: null,
   };
 
@@ -40,7 +43,7 @@ export default class Calendar extends React.Component {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={this.state.weekendsVisible}
-            initialEvents={this.state.INITIAL_EVENTS_API} // alternatively, use the `events` setting to fetch from a feed
+            initialEvents={this.state.INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
             select={this.handleDateSelect}
             eventContent={renderEventContent} // custom render function
             eventClick={this.handleEventClick}
@@ -60,6 +63,15 @@ export default class Calendar extends React.Component {
           saveEventCalendar={this.saveEventCalendar}
           selectInfo={this.state.selectInfo}
         ></Popup>
+        <PopupEditar
+          visibleModalEditar={this.state.visibleModalEditar}
+          onInputChange={this.onInputChange}
+          setVisibleModalEditar={this.setVisibleModalEditar}
+          form={this.state.form}
+          editEventCalendar={this.editEventCalendar}
+          selectInfo={this.state.selectInfo}
+          clickInfo={this.state.clickInfo}
+        ></PopupEditar>
       </div>
     );
   }
@@ -96,9 +108,9 @@ export default class Calendar extends React.Component {
   getApi = async () => {
     const eventos = await getEvents();
     this.setState({
-      INITIAL_EVENTS_API: eventos,
+      INITIAL_EVENTS: eventos,
     });
-    return console.log(this.state.INITIAL_EVENTS_API), console.log(INITIAL_EVENTS);
+    return console.log(this.state.INITIAL_EVENTS);
   };
 
   setVisibleModal = (state) => {
@@ -128,7 +140,7 @@ export default class Calendar extends React.Component {
       selectInfo: selectInfo,
     });
     this.setVisibleModal(true);
-    // console.log(selectInfo);
+    console.log(this.visibleModal);
   };
 
   saveEventCalendar = () => {
@@ -150,11 +162,39 @@ export default class Calendar extends React.Component {
     });
   };
 
-  handleEventClick = (clickInfo) => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove();
+  editEventCalendar = () => {
+    let calendarApi = this.state.selectInfo.view.calendar;
+
+    calendarApi.unselect(); // clear date selection
+
+    if (this.state.form.nombre) {
+      calendarApi.addEvent({
+        id: createEventId(),
+        title: this.state.form.nombre,
+        start: this.state.selectInfo.startStr,
+        end: this.state.selectInfo.endStr,
+        allDay: this.state.selectInfo.allDay,
+      });
     }
+  };
+
+  setVisibleModalEditar = (state) => {
+    this.setState({
+      visibleModalEditar: state,
+    });
+  };
+
+  handleEventClick = (clickInfo) => {
+    this.setState({
+      clickInfo: clickInfo,
+    });
+    this.setVisibleModalEditar(true);
+    console.log(this.visibleModalEditar);
+
+    // eslint-disable-next-line no-restricted-globals
+    // if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
+    //   clickInfo.event.remove();
+    // }
   };
 
   handleEvents = (events) => {
