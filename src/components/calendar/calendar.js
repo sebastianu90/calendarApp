@@ -26,6 +26,8 @@ export default class Calendar extends React.Component {
   }
 
   render() {
+    console.log(this.state.INITIAL_EVENTS); // FÍJATE CÓMO CAMBIÓ EL RESULTADO! AHORA TENEMOS EL EVENTO CON TODOS SUS DATOS ANTERIORES MÁS START Y END CON LOS FORMATOS CORRECTOS.
+
     return (
       <div className="demo-app">
         {this.renderSidebar()}
@@ -110,7 +112,6 @@ export default class Calendar extends React.Component {
     this.setState({
       INITIAL_EVENTS: eventos,
     });
-    return console.log(this.state.INITIAL_EVENTS);
   };
 
   setVisibleModal = (state) => {
