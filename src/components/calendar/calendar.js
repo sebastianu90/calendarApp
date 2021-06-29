@@ -45,7 +45,7 @@ export default class Calendar extends React.Component {
             selectMirror={true}
             dayMaxEvents={true}
             weekends={this.state.weekendsVisible}
-            initialEvents={this.state.INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+            events={this.state.INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
             select={this.handleDateSelect}
             eventContent={renderEventContent} // custom render function
             eventClick={this.handleEventClick}
